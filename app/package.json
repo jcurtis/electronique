@@ -1,8 +1,8 @@
 {
-  "name": "electron-boilerplate",
-  "productName": "Electron Boilerplate",
-  "identifier": "com.example.electron-boilerplate",
-  "description": "Starter for your Electron application. Out of the box ready for serious stuff.",
+  "name": "electronique",
+  "productName": "Electronique",
+  "identifier": "com.jcurtis.electronique",
+  "description": "Unofficial Google Play Music desktop app",
   "version": "0.1.0",
   "author": "Jamie Curtis <jamocurtis@gmail.com>",
   "main": "background.js",

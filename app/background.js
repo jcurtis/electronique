@@ -25,7 +25,8 @@ app.on('ready', function () {
         x: mainWindowState.x,
         y: mainWindowState.y,
         width: mainWindowState.width,
-        height: mainWindowState.height
+        height: mainWindowState.height,
+        'title-bar-style': 'hidden'
     });
 
     if (mainWindowState.isMaximized) {

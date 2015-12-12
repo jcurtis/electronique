@@ -3,7 +3,7 @@
 // It doesn't have any windows which you can see on screen, but we can open
 // window from here.
 
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, globalShortcut } from 'electron';
 import devHelper from './vendor/electron_boilerplate/dev_helper';
 import windowStateKeeper from './vendor/electron_boilerplate/window_state';
 
@@ -15,40 +15,56 @@ var mainWindow;
 
 // Preserver of the window size and position between app launches.
 var mainWindowState = windowStateKeeper('main', {
-    width: 1000,
-    height: 600
+  width: 1000,
+  height: 600
 });
 
 app.on('ready', function () {
 
-    mainWindow = new BrowserWindow({
-        x: mainWindowState.x,
-        y: mainWindowState.y,
-        width: mainWindowState.width,
-        height: mainWindowState.height,
-        'title-bar-style': 'hidden'
-    });
+  mainWindow = new BrowserWindow({
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
+    'title-bar-style': 'hidden'
+  });
 
-    if (mainWindowState.isMaximized) {
-        mainWindow.maximize();
-    }
+  if (mainWindowState.isMaximized) {
+    mainWindow.maximize();
+  }
 
-    if (env.name === 'test') {
-        mainWindow.loadURL('file://' + __dirname + '/spec.html');
-    } else {
-        mainWindow.loadURL('file://' + __dirname + '/app.html');
-    }
+  if (env.name === 'test') {
+    mainWindow.loadURL('file://' + __dirname + '/spec.html');
+  } else {
+    mainWindow.loadURL('file://' + __dirname + '/app.html');
+  }
 
-    if (env.name !== 'production') {
-        devHelper.setDevMenu();
-        mainWindow.openDevTools();
-    }
+  if (env.name !== 'production') {
+    devHelper.setDevMenu();
+    mainWindow.openDevTools();
+  }
 
-    mainWindow.on('close', function () {
-        mainWindowState.saveState(mainWindow);
-    });
+  mainWindow.on('close', function () {
+    mainWindowState.saveState(mainWindow);
+  });
+
+  // Register media keys
+  globalShortcut.register('MediaPlayPause', () => {
+    mainWindow.webContents.send('MediaPlayPause');
+  });
+  globalShortcut.register('MediaNextTrack', () => {
+    mainWindow.webContents.send('MediaNextTrack');
+  });
+  globalShortcut.register('MediaPreviousTrack', () => {
+    mainWindow.webContents.send('MediaPreviousTrack');
+  });
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregister('MediaPlayPause');
+  globalShortcut.unregisterAll();
 });
 
 app.on('window-all-closed', function () {
-    app.quit();
+  app.quit();
 });

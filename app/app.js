@@ -3,10 +3,10 @@
 
 // Use new ES6 modules syntax for everything.
 import os from 'os'; // native node.js module
-import { remote } from 'electron'; // native electron module
+import { remote, ipcRenderer } from 'electron'; // native electron module
 import jetpack from 'fs-jetpack'; // module loaded from npm
-import { greet } from './hello_world/hello_world'; // code authored by you in this project
 import env from './env';
+import * as controls from './controls';
 
 console.log('Loaded environment variables:', env);
 
@@ -17,4 +17,14 @@ var appDir = jetpack.cwd(app.getAppPath());
 // here files like it is node.js! Welcome to Electron world :)
 console.log('The author if this app is:', appDir.read('package.json', 'json').author);
 
-document.addEventListener('DOMContentLoaded', function() { });
+document.addEventListener('DOMContentLoaded', () => {
+  // Handle media keys
+  controls.loadControls();
+  ipcRenderer.on('MediaPlayPause', controls.playPause);
+  ipcRenderer.on('MediaNextTrack', controls.forwardTrack);
+  ipcRenderer.on('MediaPreviousTrack', controls.rewindTrack);
+
+  // Handle web controls
+  document.getElementById('top-panel-controls-back').addEventListener('click', controls.browserBack);
+  document.getElementById('top-panel-controls-forward').addEventListener('click', controls.browserForward);
+});
